@@ -13,12 +13,11 @@ static uint8_t payload[250];
 
 // Callback when data is sent
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
-  Serial.print("Last Packet Send Status: ");
   if (sendStatus == 0){
-    Serial.println("Delivery success");
+    Serial.println("Success");
   }
   else{
-    Serial.println("Delivery fail");
+    Serial.println("Fail");
   }
 }
 
@@ -48,9 +47,10 @@ void setup() {
     return;
   }
 
-  esp_now_set_self_role(ESP_NOW_ROLE_MAX);
+  esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   esp_now_register_send_cb(OnDataSent);
   esp_now_register_recv_cb(OnDataRecv);
+
 }
 
 void loop() {
@@ -66,7 +66,7 @@ void loop() {
       uint16_t tok_idx = 0;
       while(token != NULL){
 
-        //some payload lengths are reserved, like 0
+        //some payload lengths are reserved, like 0 (should be 251-255 bc max payload is 250)
         //0 means add peer as slave
         if (payload_len == 0 && tok_idx == 7){
           esp_now_add_peer(receiver, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
@@ -90,5 +90,6 @@ void loop() {
 
       esp_now_send(receiver, (uint8_t *) &payload, payload_len);
     }
+    while(Serial.available() > 0) Serial.read(); //empty serial 
   }
 }
