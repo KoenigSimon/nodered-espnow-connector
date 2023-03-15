@@ -8,8 +8,8 @@ static char dataBuffer[600];
 //5 FF FF FF FF FF FF B4 E6 2D 42 C0
 
 static uint8_t payload_len;
-uint8_t receiver[6];
-uint8_t payload[250];
+static uint8_t receiver[6];
+static uint8_t payload[250];
 
 // Callback when data is sent
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
@@ -66,7 +66,7 @@ void loop() {
       uint16_t tok_idx = 0;
       while(token != NULL){
 
-        //some payload lengths are reserved, like 0 and 1
+        //some payload lengths are reserved, like 0
         //0 means add peer as slave
         if (payload_len == 0 && tok_idx == 7){
           esp_now_add_peer(receiver, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
